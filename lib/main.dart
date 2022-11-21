@@ -59,9 +59,9 @@ class _HomePageState extends State<HomePage> {
 
   Widget _createGifTable(BuildContext context, AsyncSnapshot snapshot){
     return GridView.builder(
-        padding: EdgeInsets. all (10.0) ,
+        padding: EdgeInsets.all(10.0) ,
         gridDelegate : SliverGridDelegateWithFixedCrossAxisCount(
-            crossAxisCount: 2,
+            crossAxisCount: 1,
             crossAxisSpacing : 10.0,
             mainAxisSpacing: 10.0
         ),
@@ -69,9 +69,29 @@ class _HomePageState extends State<HomePage> {
         itemBuilder: (context, index){
           if(_search == null || index < snapshot.data.length)
             return GestureDetector(
-              child: FadeInImage.memoryNetwork(
-                placeholder: kTransparentImage,
-                image: snapshot.data[index]["items"][index]["snippet"]["thumbnails"]["default"]["url"], height : 300.0, fit : BoxFit.cover,
+              child: Container(
+                height: 0.0,
+                child: Row(
+                  children: [
+                    Expanded(
+                      child: FractionallySizedBox(
+                        widthFactor: 0.5,
+                        heightFactor: 1.0,
+                        child: Text("sexo", style: TextStyle(fontSize: 25, color: Colors.white),),
+                      ),
+                    ),
+                    Expanded(
+                      child: FractionallySizedBox(
+                        widthFactor: 1.0,
+                        heightFactor: 1.0,
+                        child: FadeInImage.memoryNetwork(
+                          placeholder: kTransparentImage,
+                          image: snapshot.data[index]["items"][index]["snippet"]["thumbnails"]["default"]["url"], height : 300.0, fit : BoxFit.cover,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
               ),
               onTap: (){
                 // Navigator.push(context,
@@ -114,7 +134,6 @@ class _HomePageState extends State<HomePage> {
       var videoInfoRequest = await http.get(Uri.parse("https://www.googleapis.com/youtube/v3/videos?key="+"$_apiKey"+"&id="+"$videoId"+"&part=snippet"));
       videoInfo.add(jsonDecode(videoInfoRequest.body));
     }
-    print(videoInfo);
     return videoInfo;
   }
 

@@ -1,3 +1,6 @@
+import 'dart:collection';
+import 'dart:ffi';
+
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:async';
@@ -44,7 +47,7 @@ class _HomePageState extends State<HomePage> {
 
   var _apiKey = dotenv.env['APIKEY'];
   var _search = "";
-  var _offset = 10;
+  var _offset = 1;
 
   int _getCount(List data){
     if (_search == null){
@@ -62,13 +65,13 @@ class _HomePageState extends State<HomePage> {
             crossAxisSpacing : 10.0,
             mainAxisSpacing: 10.0
         ),
-        itemCount: _getCount(snapshot.data["items"]),
+        itemCount: _getCount(snapshot.data),
         itemBuilder: (context, index){
-          if(_search == null || index < snapshot.data["items"].length)
+          if(_search == null || index < snapshot.data.length)
             return GestureDetector(
               child: FadeInImage.memoryNetwork(
                 placeholder: kTransparentImage,
-                image: snapshot.data["items"][index]["snippet"]["thumbnails"]["default"]["url"], height : 300.0, fit : BoxFit.cover,
+                image: snapshot.data[index]["items"][index]["snippet"]["thumbnails"]["default"]["url"], height : 300.0, fit : BoxFit.cover,
               ),
               onTap: (){
                 // Navigator.push(context,
@@ -96,24 +99,24 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
-  Future<Map> _getTrending() async{
+  Future<List<dynamic>> _getTrending() async{
     http.Response response;
     if(_search == ''){
       response = await http.get(Uri.parse("https://www.googleapis.com/youtube/v3/search?key="+"$_apiKey"+"&channel_id=UCqB90BBr6eNRaJl-kl30Xxw&type=video&maxResults=$_offset"));
     } else {
       response = await http.get(Uri.parse("https://www.googleapis.com/youtube/v3/search?key="+"$_apiKey"+"&channel_id=UCqB90BBr6eNRaJl-kl30Xxw&type=video&maxResults=$_offset"));
     }
-    return jsonDecode(response.body);
-  }
 
-  Future<Map> _getVideo(index) async{
-    var teste = await _getTrending();
-    print(teste['items'][index]['id']['videoId']);
-    http.Response response;
-    response = await http.get(Uri.parse("https://www.googleapis.com/youtube/v3/videos?key="+"$_apiKey"+"&id="+"{$teste['items'][index]['id']['videoId']}"+"&part=snippet"));
-    return jsonDecode(response.body);
+    var json = jsonDecode(response.body);
+    List<dynamic> videoInfo = [];
+    for(int i = 0; i < json['items'].length; i++){
+      var videoId = json['items'][i]['id']['videoId'];
+      var videoInfoRequest = await http.get(Uri.parse("https://www.googleapis.com/youtube/v3/videos?key="+"$_apiKey"+"&id="+"$videoId"+"&part=snippet"));
+      videoInfo.add(jsonDecode(videoInfoRequest.body));
+    }
+    print(videoInfo);
+    return videoInfo;
   }
-
 
   @override
   Widget build(BuildContext context) {
@@ -146,7 +149,7 @@ class _HomePageState extends State<HomePage> {
           ),
           Expanded(
             child: FutureBuilder(
-              future: _getVideo(),
+              future: _getTrending(),
               builder: (BuildContext context, AsyncSnapshot snapshot) {
                 switch(snapshot.connectionState){
                   case ConnectionState.waiting:

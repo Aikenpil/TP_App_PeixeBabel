@@ -47,7 +47,7 @@ class _HomePageState extends State<HomePage> {
 
   var _apiKey = dotenv.env['APIKEY'];
   var _search = "";
-  var _offset = 1;
+  var _offset = 2;
 
   int _getCount(List data){
     if (_search == null){
@@ -63,30 +63,33 @@ class _HomePageState extends State<HomePage> {
         gridDelegate : SliverGridDelegateWithFixedCrossAxisCount(
             crossAxisCount: 1,
             crossAxisSpacing : 10.0,
-            mainAxisSpacing: 10.0
+            mainAxisSpacing: 10.0,
+            childAspectRatio: 2
         ),
         itemCount: _getCount(snapshot.data),
         itemBuilder: (context, index){
           if(_search == null || index < snapshot.data.length)
             return GestureDetector(
               child: Container(
-                height: 0.0,
+                //height: 1.0,
+                color: Colors.blueAccent,
                 child: Row(
                   children: [
                     Expanded(
                       child: FractionallySizedBox(
-                        widthFactor: 0.5,
-                        heightFactor: 1.0,
-                        child: Text("sexo", style: TextStyle(fontSize: 25, color: Colors.white),),
+                        alignment: Alignment.center,
+                        widthFactor: 0.8,
+                        heightFactor: 0.5,
+                        child: Text(snapshot.data[index]['items'][0]['snippet']['title'], style: TextStyle(fontSize: 18, color: Colors.white),textAlign: TextAlign.center,),
                       ),
                     ),
                     Expanded(
                       child: FractionallySizedBox(
-                        widthFactor: 1.0,
-                        heightFactor: 1.0,
+                        widthFactor: 1,
+                        heightFactor: 1,
                         child: FadeInImage.memoryNetwork(
                           placeholder: kTransparentImage,
-                          image: snapshot.data[index]["items"][index]["snippet"]["thumbnails"]["default"]["url"], height : 300.0, fit : BoxFit.cover,
+                          image: snapshot.data[index]["items"][0]["snippet"]["thumbnails"]["default"]["url"], height : 300.0, fit : BoxFit.cover,
                         ),
                       ),
                     ),

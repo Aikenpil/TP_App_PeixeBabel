@@ -1,6 +1,7 @@
 import 'dart:collection';
 import 'dart:ffi';
 
+import 'package:app_peixebabel/descripPage.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:async';
@@ -97,9 +98,9 @@ class _HomePageState extends State<HomePage> {
                 ),
               ),
               onTap: (){
-                // Navigator.push(context,
-                //     MaterialPageRoute(builder: (context) => GifPage(snapshot.data["data"][index]))
-                // );
+                Navigator.push(context,
+                    MaterialPageRoute(builder: (context) => DescripPage(snapshot.data[index]['items'][0]['snippets']))
+                );
               },
             );
           else return Container(

@@ -90,7 +90,7 @@ class _HomePageState extends State<HomePage> {
                         heightFactor: 1,
                         child: FadeInImage.memoryNetwork(
                           placeholder: kTransparentImage,
-                          image: snapshot.data[index]["items"][0]["snippet"]["thumbnails"]["default"]["url"], height : 300.0, fit : BoxFit.cover,
+                          image: snapshot.data[index]["items"][0]["snippet"]["thumbnails"]["maxres"]["url"], height : 300.0, fit : BoxFit.cover,
                         ),
                       ),
                     ),
@@ -99,7 +99,7 @@ class _HomePageState extends State<HomePage> {
               ),
               onTap: (){
                 Navigator.push(context,
-                    MaterialPageRoute(builder: (context) => DescripPage(snapshot.data[index]['items'][0]['snippets']))
+                    MaterialPageRoute(builder: (context) => DescripPage(snapshot.data[index]['items'][0]))
                 );
               },
             );
